@@ -32,21 +32,7 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(PREDICTOR_PATH)
 
 # Load the image to be used as our overlay
-"""
-import glob
-imgEye = []
-orig_mask = []
-orig_mask_inv = []
-for img in glob.glob("img/*.png"):
-    n= cv2.imread(img)
-    m=n[:, :, :3]
-    x=cv2.bitwise_not(m)
-    orig_mask.append(m)
-    imgEye.append(m)
-    orig_mask_inv.append(x)
-"""
-
-imgEye = cv2.imread('img/Bild3.png', -1)
+imgEye = cv2.imread('img/Bild4.png', -1)
 # Create the mask from the overlay image
 orig_mask = imgEye[:, :, 3]
 
@@ -57,7 +43,7 @@ orig_mask_inv = cv2.bitwise_not(orig_mask)
 # and save the original image size
 imgEye = imgEye[:, :, :3]
 origEyeHeight, origEyeWidth = imgEye.shape[:2]
-#origEyeHeight, origEyeWidth = imgEye[0].shape[:2]
+origEyeHeight, origEyeWidth = imgEye[0].shape[:2]
 
 
 
@@ -81,8 +67,6 @@ kalman.processNoiseCov = np.array([[1,0,0,0],
 
 measurement = np.array((2,1), np.float32)
 prediction = np.zeros((2,1), np.float32)
-
-
 
 
 #We are not doing really face recognition
@@ -297,16 +281,14 @@ def detectAndTrackMultipleFaces():
                 t_w = int(tracked_position.width())
                 t_h = int(tracked_position.height())
 
-                coord = np.array([np.float32(r_x), np.float32(r_y)],np.float32)
-
-
+                #coord = np.array([np.float32(r_x), np.float32(r_y),np.float32(r_w), np.float32(r_h)],np.float32)
+                coord = np.array([np.float32(r_x), np.float32(r_y)], np.float32)
                 kalman.correct(coord)
                 prediction_coord = kalman.predict();
                 t_x=int(prediction_coord[0])
                 t_y=int(prediction_coord[1])
-
-
-
+                #t_w=int(prediction_coord[2])
+                #t_h=int(prediction_coord[3])
                 """
                 cv2.rectangle(resultImage, (t_x, t_y),
                                         (t_x + t_w , t_y + t_h),
@@ -326,15 +308,15 @@ def detectAndTrackMultipleFaces():
                 """
                 offsety=-15
                 offsetx=100
-                x1=t_x +offsetx
-                x2=t_x+offsetx+t_w/2       #t_x + ((len(textlist[fid]))*15 +offsetx)*t_w/100
-                y1=t_y+offsety
-                y2=t_y+offsety+t_h/2
+                x1=(t_x +offsetx)
+                x2=t_x  #t_x + ((len(textlist[fid]))*15 +offsetx)*t_w/100
+                y1=t_y + offsety
+                y2=t_x  +offsety
 
                 roi_width = x2-x1
                 roi_height = y2-y1
 
-                if x1 > 0 and x2 < 600 and y1 > 0 and y1 < 590:
+                if x2 > 0 and x1 < 775 and y1 > 0 and y1 < 500:
                     # calculate the masks for the overlay
                     eyeOverlay = cv2.resize(imgEye, (roi_width, roi_height))
                     # eyeOverlay_gray = cv2.cvtColor(eyeOverlay, cv2.COLOR_BGR2GRAY)
@@ -358,10 +340,10 @@ def detectAndTrackMultipleFaces():
 
 
                 if fid in faceNames.keys():
-                    cv2.putText(resultImage, textlist[fid] ,
+                    cv2.putText(resultImage, str(roi_width),#textlist[fid] ,
                                 (int(t_x + t_w/2), int(t_y)),
                                 cv2.FONT_HERSHEY_SIMPLEX,
-                                (t_w/100), (255, 255, 255), 2)
+                                0.5, (255, 255, 255), 2)
                 else:
                     cv2.putText(resultImage, "Detecting..." ,
                                 (int(t_x + t_w/2), int(t_y)),

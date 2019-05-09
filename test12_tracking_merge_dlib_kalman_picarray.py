@@ -32,7 +32,7 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(PREDICTOR_PATH)
 
 # Load the image to be used as our overlay
-"""
+
 import glob
 imgEye = []
 orig_mask = []
@@ -40,25 +40,21 @@ orig_mask_inv = []
 for img in glob.glob("img/*.png"):
     n= cv2.imread(img)
     m=n[:, :, :3]
+
     x=cv2.bitwise_not(m)
     orig_mask.append(m)
     imgEye.append(m)
     orig_mask_inv.append(x)
+
+#imgEye1 = cv2.imread('img/Bild3.png', -1)
 """
-
 imgEye = cv2.imread('img/Bild3.png', -1)
-# Create the mask from the overlay image
 orig_mask = imgEye[:, :, 3]
-
-# Create the inverted mask for the overlay image
 orig_mask_inv = cv2.bitwise_not(orig_mask)
-
-# Convert the overlay image image to BGR
-# and save the original image size
 imgEye = imgEye[:, :, :3]
-origEyeHeight, origEyeWidth = imgEye.shape[:2]
-#origEyeHeight, origEyeWidth = imgEye[0].shape[:2]
 
+"""
+#origEyeHeight, origEyeWidth = imgEye[2].shape[:2]
 
 
 
@@ -110,6 +106,9 @@ def detectAndTrackMultipleFaces():
 
     #The color of the rectangle we draw around the face
     rectangleColor = (0,165,255)
+
+                    # place the joined image, saved to dst back over the original image
+                    resultImage[y1:y2, x1:x2] = dst
 
     #variables holding the current frame number and the current faceid
     frameCounter = 0
@@ -336,10 +335,10 @@ def detectAndTrackMultipleFaces():
 
                 if x1 > 0 and x2 < 600 and y1 > 0 and y1 < 590:
                     # calculate the masks for the overlay
-                    eyeOverlay = cv2.resize(imgEye, (roi_width, roi_height))
+                    eyeOverlay = cv2.resize(imgEye[2], (roi_width, roi_height))
                     # eyeOverlay_gray = cv2.cvtColor(eyeOverlay, cv2.COLOR_BGR2GRAY)
-                    mask = cv2.resize(orig_mask, (roi_width, roi_height), interpolation=cv2.INTER_AREA)
-                    mask_inv = cv2.resize(orig_mask_inv, (roi_width, roi_height), interpolation=cv2.INTER_AREA)
+                    mask = cv2.resize(orig_mask[2], (roi_width, roi_height), interpolation=cv2.INTER_AREA)
+                    mask_inv = cv2.resize(orig_mask_inv[2], (roi_width, roi_height), interpolation=cv2.INTER_AREA)
                     # ret, eye_mask = cv2.threshold(eyeOverlay_gray, 20, 255, cv2.THRESH_BINARY)
 
                     # take ROI for the overlay from background, equal to size of the overlay image
@@ -374,7 +373,7 @@ def detectAndTrackMultipleFaces():
             #original 320x240, we resize the image again
             #
             #Note that it would also be possible to keep the large version
-            #of the baseimage and make the result image a copy of this large
+            #of the baseimage and mae the result image a copy of this large
             #base image and use the scaling factor to draw the rectangle
             #at the right coordinates.
             largeResult = cv2.resize(resultImage,

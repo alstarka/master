@@ -32,7 +32,7 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(PREDICTOR_PATH)
 
 # Load the image to be used as our overlay
-"""
+
 import glob
 imgEye = []
 orig_mask = []
@@ -44,21 +44,16 @@ for img in glob.glob("img/*.png"):
     orig_mask.append(m)
     imgEye.append(m)
     orig_mask_inv.append(x)
+
+
 """
-
 imgEye = cv2.imread('img/Bild3.png', -1)
-# Create the mask from the overlay image
 orig_mask = imgEye[:, :, 3]
-
-# Create the inverted mask for the overlay image
 orig_mask_inv = cv2.bitwise_not(orig_mask)
-
-# Convert the overlay image image to BGR
-# and save the original image size
 imgEye = imgEye[:, :, :3]
-origEyeHeight, origEyeWidth = imgEye.shape[:2]
-#origEyeHeight, origEyeWidth = imgEye[0].shape[:2]
 
+"""
+#origEyeHeight, origEyeWidth = imgEye.shape[:2]
 
 
 
